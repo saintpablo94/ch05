@@ -52,6 +52,7 @@ public class UserServiceTest {
 		}
 		
 		userService.upgradeLevels();
+		
 		checkLevel(users.get(0), Level.BASIC);
 		checkLevel(users.get(1), Level.SILVER);
 		checkLevel(users.get(2), Level.SILVER);
