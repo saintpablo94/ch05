@@ -1,22 +1,13 @@
 package springbook.user.dao;
 
-import java.awt.List;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.util.ConcurrentReferenceHashMap.ReferenceType;
 
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
@@ -77,6 +68,26 @@ public class UserDaoJdbc implements UserDao {
 	public Collection<User> getAll() {
 		final String query = "select * from users order by id";
 		return jdbcTemplate.query(query, this.userMapper);
+	}
+
+	public void update(User user) {
+		final String query = 
+				" update users set "
+				+ " name = ?,"
+				+ " password = ?,"
+				+ " level = ?,"
+				+ " login = ?,"
+				+ " recommend = ?" 
+				+ " where id = ? ";
+		this.jdbcTemplate.update(
+				query, 
+				user.getName(),
+				user.getPassword(),
+				user.getLevel().intValue(),
+				user.getLogin(),
+				user.getRecommand(),
+				user.getId()); 
+		
 	}
 
 }

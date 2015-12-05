@@ -32,7 +32,7 @@ import springbook.user.domain.User;
 /*@DirtiesContext*/
 public class UserDaoTest {
 	@Autowired ApplicationContext context;	
-	@Autowired private UserDao dao; 
+	@Autowired UserDao dao; 
 	@Autowired DataSource dataSource;
 	
 	private User user1;
@@ -138,6 +138,26 @@ public class UserDaoTest {
 			System.out.println(DuplicateKeyException.class);
 			//assertThat(set.translate(null, null, sqlEx), is(DuplicateKeyException.class));
 		}
+	}
+	
+	@Test
+	public void update(){
+		dao.deleteAll();
+		dao.add(user1);
+		dao.add(user2);
+		
+		user1.setName("test");
+		user1.setPassword("password");
+		user1.setLevel(Level.GOLD);
+		user1.setLogin(1000);
+		user1.setRecommand(999);
+		dao.update(user1);
+		
+		User userupdate = dao.get(user1.getId());
+		checkSameUser(user1, userupdate);
+		User user2same = dao.get(user2.getId());
+		checkSameUser(user2, user2same);
+		
 	}
 	
 	private void checkSameUser(User user1, User user2) {
