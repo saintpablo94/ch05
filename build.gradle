@@ -23,6 +23,9 @@ dependencies {
 	compile "org.springframework:spring-jdbc:${springVersion}"
 	compile "org.springframework:spring-context-support:${springVersion}"
 	
+	compile 'org.springframework.integration:spring-integration-mail:4.1.2.RELEASE'
+	
+	compile 'javax.mail:mail:1.4.1'
 	compile 'org.projectlombok:lombok:1.12.2'
 	compile 'mysql:mysql-connector-java:5.1.30'
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'

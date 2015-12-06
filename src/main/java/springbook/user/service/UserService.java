@@ -2,7 +2,9 @@ package springbook.user.service;
 
 import java.util.List;
 
-
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -17,6 +19,7 @@ public class UserService {
 
 	UserDao userDao;
 	private PlatformTransactionManager transactionManager;
+	private MailSender mailSender;
 	
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
 		this.transactionManager = transactionManager;
@@ -26,6 +29,10 @@ public class UserService {
 		this.userDao = userDao;
 	}
 	
+	public void setMailSender(MailSender mailSender) {
+		this.mailSender = mailSender;
+	}
+
 	public void upgradeLevels() throws Exception {
 		
 		TransactionStatus status =
@@ -74,6 +81,17 @@ public class UserService {
 	protected void upgradeLevel(User user) {
 		user.upgradeLevel();
 		userDao.update(user);
+		sendUpgradeEMail(user);
+	}
+
+	private void sendUpgradeEMail(User user) {
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(user.getEmail());
+		mailMessage.setFrom("abc@a.c");
+		mailMessage.setSubject("Upgrade Infomation");
+		mailMessage.setText("사용자님의 등급이 "+user.getLevel().name());
+		
+		this.mailSender.send(mailMessage);
 	}
 
 	public void add(User user) {

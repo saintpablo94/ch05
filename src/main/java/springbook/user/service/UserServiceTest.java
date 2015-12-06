@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -34,17 +35,19 @@ public class UserServiceTest {
 	UserDao userDao;
 	@Autowired
 	PlatformTransactionManager transactionManager;
+	@Autowired
+	MailSender mailSender;
 
 	List<User> users;
 
 	@Before
 	public void setUp(){
 		users = Arrays.asList(
-				new User("test01","홍길동01","p1",Level.BASIC,MIN_LOGCOUNT_FOR_SILVER-1,0),
-				new User("test02","홍길동02","p2",Level.BASIC,MIN_LOGCOUNT_FOR_SILVER,0),
-				new User("test03","홍길동03","p3",Level.SILVER,60,MIN_RECCOMEND_FOR_GOLD-1),
-				new User("test04","홍길동04","p4",Level.SILVER,60,MIN_RECCOMEND_FOR_GOLD),
-				new User("test05","홍길동05","p5",Level.GOLD,100,Integer.MAX_VALUE)
+				new User("test01","홍길동01","p1","p1@a.b.c",Level.BASIC,MIN_LOGCOUNT_FOR_SILVER-1,0),
+				new User("test02","홍길동02","p2","p2@a.b.c",Level.BASIC,MIN_LOGCOUNT_FOR_SILVER,0),
+				new User("test03","홍길동03","p3","p3@a.b.c",Level.SILVER,60,MIN_RECCOMEND_FOR_GOLD-1),
+				new User("test04","홍길동04","p4","p4@a.b.c",Level.SILVER,60,MIN_RECCOMEND_FOR_GOLD),
+				new User("test05","홍길동05","p5","p5@a.b.c",Level.GOLD,100,Integer.MAX_VALUE)
 				);
 	}
 	
@@ -92,6 +95,7 @@ public class UserServiceTest {
 		UserService testUserService = new TestUserService(users.get(3).getId());
 		testUserService.setUserDao(userDao);
 		testUserService.setTransactionManager(transactionManager);
+		testUserService.setMailSender(mailSender);
 		
 		userDao.deleteAll();
 		for(User user : users) userDao.add(user);
