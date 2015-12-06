@@ -1,14 +1,18 @@
 package springbook.user.service;
 
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 import java.util.Arrays;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,7 +21,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
-
 import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.UserService.MIN_RECCOMEND_FOR_GOLD;
 
@@ -28,6 +31,8 @@ public class UserServiceTest {
 	UserService userService;
 	@Autowired
 	UserDao userDao;
+	@Autowired
+	DataSource dataSource;
 
 	List<User> users;
 
@@ -48,7 +53,7 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void upgradeLevels(){
+	public void upgradeLevels() throws Exception{
 		userDao.deleteAll();
 		for (User user : users) {
 			userDao.add(user);
@@ -81,6 +86,33 @@ public class UserServiceTest {
 		assertThat(userWithoutLevelReadUser.getLevel(), is(Level.BASIC));
 	}
 	
+	@Test
+	public void upgradeAllOrNothing() throws Exception{
+		UserService testUserService = new TestUserService(users.get(3).getId());
+		testUserService.setUserDao(this.userDao);
+		testUserService.setDataSource(this.dataSource);
+		
+		userDao.deleteAll();
+		for(User user : users) userDao.add(user);
+			
+		try {
+			testUserService.upgradeLevels();
+			fail("TestUserServciceException expected");
+		} catch (TestUserServiceException e) {
+		}
+		
+		checkLevelUpgraded(users.get(1),false);
+	}
+	
+	private void checkLevelUpgraded(User user, boolean upgade) {
+		User userUpgrade = userDao.get(user.getId());
+		if(upgade){
+			assertThat(userUpgrade.getLevel(), is(user.getLevel().nextLevel()));
+		}else {
+			assertThat(userUpgrade.getLevel(), is(user.getLevel()));			
+		}
+	}
+
 	private void checkLevel(User user, boolean upgrade) {
 		User userUpgrade = userDao.get(user.getId());
 		if(upgrade){
