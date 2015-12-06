@@ -3,9 +3,8 @@ package springbook.user.dao;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.awt.List;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
@@ -78,22 +77,22 @@ public class UserDaoTest {
 	@Test public void getAll() throws SQLException {
 		dao.deleteAll();
 		
-		Collection<User> users0 = dao.getAll();
+		List<User> users0 = dao.getAll();
 		assertThat(users0.size(), is(0));
 		
 		dao.add(user1);
-		Collection<User> users1 = dao.getAll();
+		List<User> users1 = dao.getAll();
 		assertThat(users1.size(), is(1));
 		checkSameUser(user1, (User)users1.toArray()[0]);
 		
 		dao.add(user2);
-		Collection<User> users2 = dao.getAll();
+		List<User> users2 = dao.getAll();
 		assertThat(users2.size(), is(2));
 		checkSameUser(user1, (User)users2.toArray().clone()[0]);
 		checkSameUser(user2, (User)users2.toArray().clone()[1]);
 		
 		dao.add(user3);
-		Collection<User> users3 = dao.getAll();
+		List<User> users3 = dao.getAll();
 		assertThat(users3.size(), is(3));
 		checkSameUser(user3, (User)users3.toArray()[0]);
 		checkSameUser(user1, (User)users3.toArray()[1]);
@@ -159,7 +158,7 @@ public class UserDaoTest {
 		checkSameUser(user2, user2same);
 		
 	}
-	
+			
 	private void checkSameUser(User user1, User user2) {
 		System.out.println(user1.getId()+":"+user2.getId());
 		System.out.println(user1.getName()+":"+user2.getName());

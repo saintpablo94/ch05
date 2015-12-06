@@ -3,6 +3,7 @@ package springbook.user.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -65,7 +66,7 @@ public class UserDaoJdbc implements UserDao {
 
 	}
 
-	public Collection<User> getAll() {
+	public List<User> getAll() {
 		final String query = "select * from users order by id";
 		return jdbcTemplate.query(query, this.userMapper);
 	}
