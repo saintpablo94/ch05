@@ -11,11 +11,13 @@ public class User {
 	Level level;
 	int login;
 	int recommand;
+	String email;
 	
 	public User() {
 	}
 	
-	public User(String id, String name, String password, Level level, int login, int recommand) {
+	public User(String id, String name, String password, 
+			    Level level, int login, int recommand) {
 		this.id = id;
 		this.name = name;
 		this.password = password;
