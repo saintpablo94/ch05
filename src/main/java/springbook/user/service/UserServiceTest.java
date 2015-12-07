@@ -16,6 +16,7 @@ import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -28,6 +29,7 @@ import static springbook.user.service.UserService.MIN_RECCOMEND_FOR_GOLD;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
+@DirtiesContext
 public class UserServiceTest {
 	@Autowired
 	UserService userService;
@@ -63,13 +65,25 @@ public class UserServiceTest {
 			userDao.add(user);
 		}
 		
+		MockMailsender mockMailsender = new MockMailsender();
+		userService.setMailSender(mockMailsender);
+		
 		userService.upgradeLevels();
 		
-		checkLevel(users.get(0), false);
-		checkLevel(users.get(1), true);
-		checkLevel(users.get(2), false);
-		checkLevel(users.get(3), true);
-		checkLevel(users.get(4), false);
+		checkLevelUpgraded(users.get(0), false);
+		checkLevelUpgraded(users.get(1), true);
+		checkLevelUpgraded(users.get(2), false);
+		checkLevelUpgraded(users.get(3), true);
+		checkLevelUpgraded(users.get(4), false);
+		
+		List<String> request = mockMailsender.getRequests();
+		
+		System.out.println("users.get(1).getEmail()) : "+users.get(1).getEmail());
+		System.out.println("users.get(1).getEmail()) : "+users.get(3).getEmail());
+		
+		assertThat(request.size(), is(2));
+		assertThat(request.get(0), is(users.get(1).getEmail()));
+		assertThat(request.get(1), is(users.get(3).getEmail()));
 	}
 	
 	@Test
